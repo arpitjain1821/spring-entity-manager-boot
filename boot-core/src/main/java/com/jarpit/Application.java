@@ -1,30 +1,63 @@
 package com.jarpit;
 
 import com.jarpit.dao.ProductDao;
+import com.jarpit.entities.Product;
+import com.jarpit.gaia.ProductMother;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
 
 /**
  * @author Arpit
  */
 
 @SpringBootApplication
-//@ComponentScan(basePackages = {"com.jarpit"})
 public class Application implements CommandLineRunner {
 
     @Autowired
     private ProductDao dao;
 
     public static void main(String[] args) {
-        // Used to bootstrap and run Spring application from Java main method
         SpringApplication.run(Application.class, args);
     }
 
-    // Provided by CommandLineRunner, will be called just before SpringApplication.run() completes.
     public void run(String... strings) throws Exception {
-        System.out.println(dao.findById(1l));
+
+        // To be called once, for creation of a row in the DB
+//        createProduct();
+
+//        persistTransientBeanWithId();
+//        persistTransientBeanWithoutId();
+        persistPersistentBean();
+
+    }
+
+    private void persistTransientBeanWithId() {
+
+        // Get a non managed (Transient) product object - Having id set
+        Product transientProductWithId = ProductMother.getBasicProduct();
+        dao.update(transientProductWithId, "New Brand Name");
+    }
+
+    private void persistTransientBeanWithoutId() {
+
+        // Get a non managed (Transient) product object - And reset ID to null
+        // This will result in creation of product
+        Product transientProductWithoutId = ProductMother.getBasicProduct();
+        transientProductWithoutId.setId(null);
+        dao.update(transientProductWithoutId, "New Brand Name");
+    }
+
+    private void persistPersistentBean() {
+        // Will internally get a managed (Persistent) product object
+        // This will have NO AFFECT on the object at all
+        dao.update(1l, "New Brand Name");
+    }
+
+    private void createProduct() {
+        Product product = ProductMother.getBasicProduct();
+        dao.create(product);
+        System.out.println("Product created successfully");
     }
 }

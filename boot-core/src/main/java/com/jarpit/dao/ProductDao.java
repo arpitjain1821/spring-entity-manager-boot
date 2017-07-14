@@ -11,5 +11,7 @@ public interface ProductDao {
 
     Product findById(Long id);
 
-    Product update(Long id, String name);
+    Product update(Product product, String updatedBrandName);
+
+    Product update(Long id, String updatedBrandName);
 }

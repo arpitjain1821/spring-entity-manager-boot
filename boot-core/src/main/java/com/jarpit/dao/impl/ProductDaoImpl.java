@@ -7,26 +7,38 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
 
 /**
  * @author Arpit
  */
-@Transactional
 @Component
 public class ProductDaoImpl implements ProductDao {
 
-    @PersistenceContext
+    @PersistenceContext(type = PersistenceContextType.EXTENDED)
     private EntityManager entityManager;
 
     public Product create(Product product) {
-        return null;
+        product.setId(null);
+        entityManager.persist(product);
+        return product;
     }
 
     public Product findById(Long id) {
         return entityManager.find(Product.class, id);
     }
 
-    public Product update(Long id, String name) {
-        return null;
+    @Transactional
+    public Product update(Product product, String updatedBrandName) {
+
+        product.setBrand(updatedBrandName);
+        entityManager.persist(product);
+        return product;
     }
+
+    public Product update(Long id, String updatedBrandName) {
+        return this.update(this.findById(id), updatedBrandName);
+    }
+
+
 }

@@ -15,6 +15,9 @@ import javax.persistence.PersistenceContextType;
 @Component
 public class ProductDaoImpl implements ProductDao {
 
+    // This is being done so that transaction management can be manual. Else, transaction closure
+    // in itself can end up doing random updates for you (was happening). Hence maintaining very
+    // string transaction boundaries. More details here https://stackoverflow.com/a/32552558/5404805
     @PersistenceContext(type = PersistenceContextType.EXTENDED)
     private EntityManager entityManager;
 
